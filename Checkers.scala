@@ -8,7 +8,7 @@ import java.util.Scanner
 // Takes necessary steps to carry out defined portion of a checkers game
 object Driver {	// Scala Class with all static methods
 	// Handles the user input and carries out all necessary tasks for the checkers game
-	def main(args: Array[String]) { 
+	def main(args: Array[String]) {
 		val myBoard = new Board
 		myBoard.setUpGame
 		myBoard.printBoard(true)
@@ -36,17 +36,17 @@ object Driver {	// Scala Class with all static methods
 
 				val preEndCol = move.slice(5, 6)
 				val endCol = Integer.parseInt(preEndCol) - 1
-			
+
 				if (OTurn) {
 						myBoard.move(startRow, startCol, endRow, endCol, 2)
-						myBoard.printBoard(true)
+						myBoard.rotateBoard180								// Rotate to black player's board orientation for output
+						myBoard.printBoard(false)
+						myBoard.rotateBoard180
 						OTurn = false
 				}
 				else {
 						myBoard.move(startRow, startCol, endRow, endCol, 1)	// Process black player's turn in red player's board orientation
-						myBoard.rotateBoard180								// Rotate to black player's board orientation for output
-						myBoard.printBoard(false)
-						myBoard.rotateBoard180								// Rotate back to red player's board orientation for further processing
+						myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 						OTurn = true
 				}
 			}
@@ -72,7 +72,7 @@ class Board {
 			}
 		}
 	}
-	
+
 	// Rotates the game board 90 degrees to the right
 	def rotateBoard90() {
 		board = board.transpose
@@ -157,7 +157,7 @@ class Board {
 		Outputs a representation of the current state of the board neatly */
 	def printBoard(defaultOrientation: Boolean) {
 		println()
-		if (defaultOrientation) 
+		if (defaultOrientation)
 			println(raw"\  1 2 3 4 5 6 7 8")
 		else
 			println(raw"\  8 7 6 5 4 3 2 1")
@@ -184,9 +184,9 @@ class Board {
 					case 4 => print("D  ")
 					case 5 => print("C  ")
 					case 6 => print("B  ")
-					case 7 => print("A  ") 
+					case 7 => print("A  ")
 				}
-			}	
+			}
 			for (j <- 0 until size) {
 				board(i)(j).color match {
 					case 0 => print("- ")
