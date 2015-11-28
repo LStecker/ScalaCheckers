@@ -96,12 +96,17 @@ class Board {
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board */
 	def move(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
 		board(sr)(sc).color = 0	// the start space will no longer contain a piece
-		// Is the move a jump?
+		// Is the move a jump forard?
 		if (sc - ec == 2 || ec - sc == 2) {
 			if (color == 1)
 				this.jump(sr, sc, er, ec, 1)
 			else if (color == 2)
 				this.jump(sr, sc, er, ec, 2)
+		}else if (sc - ec == -2 || ec - sc == -2) { //jump backward for kings
+			if (color == 3)
+				this.jump(sr, sc, er, ec, 3)
+			else if (color == 4)
+				this.jump(sr, sc, er, ec, 4)
 		}
 		else {
 			board(sr)(sc).color = 0
@@ -121,21 +126,40 @@ class Board {
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board in a unique case */
 	def jump(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
 		board(sr)(sc).color = 0							// the start space will no longer contain a piece
-		if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-			board(er)(er).color = 1
-			board(sr+1)(sc-1).color = 0
-		}
-		else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
-			board(er)(ec).color = 1
-			board(sr+1)(sc+1).color = 0
-		}
-		else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
-			board(er)(ec).color = 2
-			board(sr-1)(sc-1).color = 0
-		}
-		else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
-			board(er)(ec).color = 2
-			board(sr-1)(sc+1).color = 0
+		if (color < 3) {								//regular piece jumping
+			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
+				board(er)(er).color = 1
+				board(sr+1)(sc-1).color = 0
+			}
+			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
+				board(er)(ec).color = 1
+				board(sr+1)(sc+1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+				board(er)(ec).color = 2
+				board(sr-1)(sc-1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+				board(er)(ec).color = 2
+				board(sr-1)(sc+1).color = 0
+			}
+		}else if(color > 2) {								//king piece jumping
+			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
+				board(er)(er).color = color
+				board(sr+1)(sc-1).color = 0
+			}
+			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
+				board(er)(ec).color = color
+				board(sr+1)(sc+1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+				board(er)(ec).color = color
+				board(sr-1)(sc-1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+				board(er)(ec).color = color
+				board(sr-1)(sc+1).color = 0
+			}
 		}
 	}
 
