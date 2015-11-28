@@ -4,6 +4,7 @@
 	Date:		Nov 4th, 2015	*/
 
 import java.util.Scanner
+import scala.math.{abs}
 
 // Takes necessary steps to carry out defined portion of a checkers game
 object Driver {	// Scala Class with all static methods
@@ -115,6 +116,12 @@ class Board {
 			else if (color == 2)
 				board(er)(ec).color = 2
 		}
+		//king the piece if it mkaes it across the board
+		if(color == 2 && er == 0) {
+			board(er)(ec).color = 4
+		}else if(color == 1 && er == 7) {
+			board(er)(ec).color = 3
+		}
 	}
 
 	/* 	Parameters: 	sr 		start row 		point 1/2 of start coordinate
@@ -128,7 +135,7 @@ class Board {
 		board(sr)(sc).color = 0							// the start space will no longer contain a piece
 		if (color < 3) {								//regular piece jumping
 			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-				board(er)(er).color = color
+				board(er)(ec).color = color
 				board(sr+1)(sc-1).color = 0
 			}
 			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
@@ -144,28 +151,22 @@ class Board {
 				board(sr-1)(sc+1).color = 0
 			}
 		}else if(color > 2) {								//king piece jumping
-			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-				board(er)(er).color = color
+			if ((abs(sr - er) == 2) && (sc - ec == 2)) { 		// x is jumping o to the left
+				board(er)(ec).color = color
 				board(sr+1)(sc-1).color = 0
 			}
-			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
+			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// x is jumping o to the right
 				board(er)(ec).color = color
 				board(sr+1)(sc+1).color = 0
 			}
-			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+			else if ((abs(sr - er) == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
 				board(er)(ec).color = color
 				board(sr-1)(sc-1).color = 0
 			}
-			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
 				board(er)(ec).color = color
 				board(sr-1)(sc+1).color = 0
 			}
-		}
-		//king the piece if it mkaes it across the board
-		if(color == 2 && er == 0) {
-			board(er)(ec).color = 4
-		}else if(color == 1 && er == 7) {
-			board(er)(ec).color = 3
 		}
 	}
 
