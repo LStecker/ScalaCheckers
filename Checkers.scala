@@ -95,6 +95,7 @@ class Board {
 
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board */
 	def move(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
+		board(sr)(sc).color = 0	// the start space will no longer contain a piece
 		// Is the move a jump?
 		if (sc - ec == 2 || ec - sc == 2) {
 			if (color == 1)
@@ -192,6 +193,8 @@ class Board {
 					case 0 => print("- ")
 					case 1 => print("x ")
 					case 2 => print("o ")
+					case 3 => print("X ")
+					case 4 => print("O ")
 				}
 			}
 			println()
@@ -201,5 +204,5 @@ class Board {
 
 // Represents a game piece for a game of checkers
 class CheckerPiece {
-	var color = 0 // type of checker piece (ternary value): 0 for none, 1 for x (black), and 2 for o (red)
+	var color = 0 // type of checker piece (ternary value): 0 for none, 1 for x (black), 2 for o (red), 3 for X (black king), 4 for O (red king)
 }
