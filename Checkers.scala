@@ -4,6 +4,7 @@
 	Date:		Nov 4th, 2015	*/
 
 import java.util.Scanner
+import scala.math.{abs}
 
 // Takes necessary steps to carry out defined portion of a checkers game
 object Driver {	// Scala Class with all static methods
@@ -95,12 +96,18 @@ class Board {
 
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board */
 	def move(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
-		// Is the move a jump?
+		board(sr)(sc).color = 0	// the start space will no longer contain a piece
+		// Is the move a jump forard?
 		if (sc - ec == 2 || ec - sc == 2) {
 			if (color == 1)
 				this.jump(sr, sc, er, ec, 1)
 			else if (color == 2)
 				this.jump(sr, sc, er, ec, 2)
+		}else if (sc - ec == -2 || ec - sc == -2) { //jump backward for kings
+			if (color == 3)
+				this.jump(sr, sc, er, ec, 3)
+			else if (color == 4)
+				this.jump(sr, sc, er, ec, 4)
 		}
 		else {
 			board(sr)(sc).color = 0
@@ -108,6 +115,12 @@ class Board {
 				board(er)(ec).color = 1
 			else if (color == 2)
 				board(er)(ec).color = 2
+		}
+		//king the piece if it mkaes it across the board
+		if(color == 2 && er == 0) {
+			board(er)(ec).color = 4
+		}else if(color == 1 && er == 7) {
+			board(er)(ec).color = 3
 		}
 	}
 
@@ -120,21 +133,40 @@ class Board {
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board in a unique case */
 	def jump(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
 		board(sr)(sc).color = 0							// the start space will no longer contain a piece
-		if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-			board(er)(er).color = 1
-			board(sr+1)(sc-1).color = 0
-		}
-		else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
-			board(er)(ec).color = 1
-			board(sr+1)(sc+1).color = 0
-		}
-		else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
-			board(er)(ec).color = 2
-			board(sr-1)(sc-1).color = 0
-		}
-		else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
-			board(er)(ec).color = 2
-			board(sr-1)(sc+1).color = 0
+		if (color < 3) {								//regular piece jumping
+			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
+				board(er)(ec).color = color
+				board(sr+1)(sc-1).color = 0
+			}
+			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
+				board(er)(ec).color = color
+				board(sr+1)(sc+1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+				board(er)(ec).color = color
+				board(sr-1)(sc-1).color = 0
+			}
+			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+				board(er)(ec).color = color
+				board(sr-1)(sc+1).color = 0
+			}
+		}else if(color > 2) {								//king piece jumping
+			if ((abs(sr - er) == 2) && (sc - ec == 2)) { 		// x is jumping o to the left
+				board(er)(ec).color = color
+				board(sr+1)(sc-1).color = 0
+			}
+			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// x is jumping o to the right
+				board(er)(ec).color = color
+				board(sr+1)(sc+1).color = 0
+			}
+			else if ((abs(sr - er) == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+				board(er)(ec).color = color
+				board(sr-1)(sc-1).color = 0
+			}
+			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+				board(er)(ec).color = color
+				board(sr-1)(sc+1).color = 0
+			}
 		}
 	}
 
@@ -192,6 +224,8 @@ class Board {
 					case 0 => print("- ")
 					case 1 => print("x ")
 					case 2 => print("o ")
+					case 3 => print("X ")
+					case 4 => print("O ")
 				}
 			}
 			println()
@@ -201,5 +235,5 @@ class Board {
 
 // Represents a game piece for a game of checkers
 class CheckerPiece {
-	var color = 0 // type of checker piece (ternary value): 0 for none, 1 for x (black), and 2 for o (red)
+	var color = 0 // type of checker piece (ternary value): 0 for none, 1 for x (black), 2 for o (red), 3 for X (black king), 4 for O (red king)
 }
