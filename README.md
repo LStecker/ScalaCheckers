@@ -1,6 +1,8 @@
 # ScalaCheckers
-Programming Languages 2015 Scala Group...
-Ben Meyer, Leanna Stecker, Graham Roberts, John Andreula...
+Programming Languages 2015 Scala Group
+
+Ben Meyer, Leanna Stecker, Graham Roberts, John Andreula
+
 Created as a final project for CSC435 - Programming Languages
 
 ## Compilation and Running
