@@ -1,7 +1,7 @@
 # ScalaCheckers
-Programming Languages 2015 Scala Group
-Ben Meyer, Leanna Stecker, Graham Roberts, John Andreula
-Created as a final project for CSC435 - Programming Languages 
+Programming Languages 2015 Scala Group...
+Ben Meyer, Leanna Stecker, Graham Roberts, John Andreula...
+Created as a final project for CSC435 - Programming Languages
 
 ## Compilation and Running
 To compile the program, navigate to the Checkers.scala file and type `scalac Checkers.scala`.
