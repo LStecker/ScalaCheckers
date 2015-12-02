@@ -11,6 +11,7 @@ import scala.collection.mutable.Stack
 object Driver {	// Scala Class with all static methods
 	// Handles the user input and carries out all necessary tasks for the checkers game
 	def main(args: Array[String]) {
+		Console.out.println( "Test " + Console.RED + " RED " + Console.RESET )
 		val myBoard = new Board
 		myBoard.setUpGame
 		myBoard.printBoard(true)
@@ -28,7 +29,7 @@ object Driver {	// Scala Class with all static methods
 			println("Please enter a valid move (or \"quit\" to exit the program).")
 			println("Format: RowCol, RowCol where Row is a capital letter A-H & Col is a number 1-8")
 			if (OTurn)
-				println("It is o's turn (unless x wants to \"undo\" or \"redo\" a move):")
+				println(Console.RED + "It is o's turn (unless x wants to \"undo\" or \"redo\" a move):" + Console.RESET)
 			else
 				println("It is x's turn (unless o wants to \"undo\" or \"redo\" a move):")
 			move = scan.nextLine()
@@ -37,14 +38,14 @@ object Driver {	// Scala Class with all static methods
             }
             if (move == "undo" && moveStack.size > 0) {
                 var move = moveStack.pop
-                var endRow = move._1 
+                var endRow = move._1
                 var endCol = move._2
-                var startRow = move._3 
+                var startRow = move._3
                 var startCol = move._4
                 var turn = move._5
                 println(endCol)
                 println(endRow)
-                
+
                 myBoard.move(startRow, startCol, endRow, endCol, turn)
                 if ((startCol - endCol == 2 || endCol - startCol == 2)&& (OTurn)){
                     remainingO = remainingO +1
@@ -63,23 +64,23 @@ object Driver {	// Scala Class with all static methods
                     if ((endCol < startCol) && (endRow > startRow)){
                         myBoard.setBoardX(endRow - 1, endCol + 1)
                     }
-                
+
                 }
 
                 if (OTurn) {
-                        
+
                         myBoard.rotateBoard180                                // Rotate to black player's board orientation for output
                         myBoard.printBoard(false)
                         myBoard.rotateBoard180
                         OTurn = false
                 }
                 else {
-                        
+
                         myBoard.printBoard(true)                            // Rotate back to red player's board orientation for further processing
                         OTurn = true
                 }
                 println ("Remaining pieces for X:  " + remainingX)
-                println ("Remaining pieces for O:  " + remainingO)
+                println (Console.RED + "Remaining pieces for O:  " + remainingO + Console.RESET)
             }
 
             if (move == "restart") {
@@ -91,7 +92,7 @@ object Driver {	// Scala Class with all static methods
                 remainingO = 12
             }
 
-			if (move != "quit" && move != "restart" && move != "undo" && move.length() == 6) { 
+			if (move != "quit" && move != "restart" && move != "undo" && move.length() == 6) {
 				val preStartRow = move.charAt(0)
 				val startRow = myBoard.coordConver(preStartRow)
 				if (startRow > 7 || startRow < 0) {
@@ -153,13 +154,13 @@ object Driver {	// Scala Class with all static methods
 					}
 					println()
 					println("Remaining pieces for X: " + remainingX)
-					println("Remaining pieces for O: " + remainingO)
+					println(Console.RED + "Remaining pieces for O: " + remainingO + Console.RESET)
 					if (remainingO == 0){
 						println("X has won")
 						move = "quit"
 					}
 					if (remainingX == 0){
-						println("O has won")
+						println(Console.RED + "O has won" + Console.RESET)
 						move = "quit"
 					}
 				}
@@ -197,7 +198,7 @@ class Board {
 		}
 	}
 
-	// Rotates the game board 90 degrees to the right. Only to be used as a helper function for rotateBoard180 
+	// Rotates the game board 90 degrees to the right. Only to be used as a helper function for rotateBoard180
 	def rotateBoard90() {
 		board = board.transpose
 		for (i <- 0 until size) {
@@ -250,7 +251,7 @@ class Board {
 	}
 
 	//if a piece exists to move and it is of the right color
-	def validMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int): Boolean = { 
+	def validMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int): Boolean = {
 		var opposingColor1 = -1
 		var opposingColor2 = -1
 		if(color%2 != 0) {
@@ -284,7 +285,7 @@ class Board {
 
 	//handles printing of the board in the event of an invalid move
 	// errCode of 1 means illegal move
-	// errCode of 2 means improper format 
+	// errCode of 2 means improper format
 	def invalidMove(OTurn: Boolean, errCode: Int) {
 		var outString = ""
 		outString += "Invalid move. "
@@ -354,7 +355,7 @@ class Board {
 	}
 
 	// Converts the parts of the intput coordinate that are letters to the corresponding array position for the game board
-	def coordConver(letter: Char): Int = { 
+	def coordConver(letter: Char): Int = {
 		val coord = letter match {
 			case 'A' => 0
 			case 'B' => 1
@@ -407,9 +408,9 @@ class Board {
 				board(i)(j).color match {
 					case 0 => print("- ")
 					case 1 => print("x ")
-					case 2 => print("o ")
+					case 2 => print(Console.RED + "o " + Console.RESET)
 					case 3 => print("X ")
-					case 4 => print("O ")
+					case 4 => print(Console.RED + "O " + Console.RESET)
 				}
 			}
 			println()
