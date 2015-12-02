@@ -28,9 +28,9 @@ object Driver {	// Scala Class with all static methods
 			println("Please enter a valid move (or \"quit\" to exit the program).")
 			println("Format: RowCol, RowCol where Row is a capital letter A-H & Col is a number 1-8")
 			if (OTurn)
-				println("It is o's turn:")
+				println("It is o's turn (unless x wants to \"undo\" or \"redo\" a move):")
 			else
-				println("It is x's turn:")
+				println("It is x's turn (unless o wants to \"undo\" or \"redo\" a move):")
 			move = scan.nextLine()
 			if (move == "undo" && moveStack.size == 0) {
                 println("No moves to undo")
