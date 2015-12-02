@@ -29,9 +29,9 @@ object Driver {	// Scala Class with all static methods
 			println("Please enter a valid move (or \"quit\" to exit the program).")
 			println("Format: RowCol, RowCol where Row is a capital letter A-H & Col is a number 1-8")
 			if (OTurn)
-				println(Console.RED + "It is o's turn (unless x wants to \"undo\" or \"redo\" a move):" + Console.RESET)
+				println(Console.RED + "It is o's turn (unless x wants to \"undo\" a move):" + Console.RESET)
 			else
-				println("It is x's turn (unless o wants to \"undo\" or \"redo\" a move):")
+				println("It is x's turn (unless o wants to \"undo\" a move):")
 			move = scan.nextLine()
 			if (move == "undo" && moveStack.size == 0) {
                 println("No moves to undo")
@@ -43,8 +43,10 @@ object Driver {	// Scala Class with all static methods
                 var startRow = move._3
                 var startCol = move._4
                 var turn = move._5
+                /** Debug only
                 println(endCol)
                 println(endRow)
+                */
 
                 myBoard.move(startRow, startCol, endRow, endCol, turn)
                 if ((startCol - endCol == 2 || endCol - startCol == 2)&& (OTurn)){
@@ -170,11 +172,13 @@ object Driver {	// Scala Class with all static methods
 					}
 				}
 			}
+			/**	I don't think this is actually needed for logic
 			else {
 				if(move != "quit") {
 			 		myBoard.invalidMove(OTurn, 2)
 			 	}
 		 	}
+		 	*/
 		}
 		println()
 		println("Exiting.")
