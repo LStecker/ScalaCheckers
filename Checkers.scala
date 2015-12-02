@@ -267,15 +267,12 @@ class Board {
 				return false
 			}
 			else if((sr - er == 2 && sc - ec == 2) && (getColor(sr-1, sc-1) != opposingColor1 && getColor(sr-1, sc-1) != opposingColor2)) {
-				println("Not a legal NW Jump")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == 2) && (getColor(sr+1, sc-1) != opposingColor1 && getColor(sr+1, sc-1) != opposingColor2)) {
-				println("Not a legal SW Jump")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == -2) && (getColor(sr+1, sc+1) != opposingColor1 && getColor(sr+1, sc+1) != opposingColor2)) {
-				println("Not a legal SE Jump")
 				return false
 			}
 			else {
