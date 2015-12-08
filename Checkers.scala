@@ -11,7 +11,6 @@ import scala.collection.mutable.Stack
 object Driver {	// Scala Class with all static methods
 	// Handles the user input and carries out all necessary tasks for the checkers game
 	def main(args: Array[String]) {
-		Console.out.println( "Test " + Console.RED + " RED " + Console.RESET )
 		val myBoard = new Board
 		myBoard.setUpGame
 		myBoard.printBoard(true)
@@ -29,7 +28,7 @@ object Driver {	// Scala Class with all static methods
 			println("Please enter a valid move (or \"quit\" to exit the program).")
 			println("Format: RowCol, RowCol where Row is a capital letter A-H & Col is a number 1-8")
 			if (OTurn)
-				println(Console.RED + "It is o's turn (unless x wants to \"undo\" a move):" + Console.RESET)
+				println("It is o's turn (unless x wants to \"undo\" a move):")
 			else
 				println("It is x's turn (unless o wants to \"undo\" a move):")
 			move = scan.nextLine()
@@ -82,7 +81,7 @@ object Driver {	// Scala Class with all static methods
                         OTurn = true
                 }
                 println ("Remaining pieces for X:  " + remainingX)
-                println (Console.RED + "Remaining pieces for O:  " + remainingO + Console.RESET)
+                println ("Remaining pieces for O:  " + remainingO)
             }
 
             if (move == "restart") {
@@ -156,13 +155,13 @@ object Driver {	// Scala Class with all static methods
 					}
 					println()
 					println("Remaining pieces for X: " + remainingX)
-					println(Console.RED + "Remaining pieces for O: " + remainingO + Console.RESET)
+					println("Remaining pieces for O: " + remainingO)
 					if (remainingO == 0){
 						println("X has won")
 						move = "quit"
 					}
 					if (remainingX == 0){
-						println(Console.RED + "O has won" + Console.RESET)
+						println("O has won")
 						move = "quit"
 					}
 				}
@@ -412,9 +411,9 @@ class Board {
 				board(i)(j).color match {
 					case 0 => print("- ")
 					case 1 => print("x ")
-					case 2 => print(Console.RED + "o " + Console.RESET)
+					case 2 => print("o ")
 					case 3 => print("X ")
-					case 4 => print(Console.RED + "O " + Console.RESET)
+					case 4 => print("O ")
 				}
 			}
 			println()
