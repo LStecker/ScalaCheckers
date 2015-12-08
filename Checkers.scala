@@ -89,6 +89,7 @@ object Driver {	// Scala Class with all static methods
                 myBoard.move(startRow, startCol, endRow, endCol, turn)
                 if ((startCol - endCol == 2 || endCol - startCol == 2)&& (OTurn)){
                     remainingO = remainingO +1
+                 if(turn == 1){   
                     if ((endCol < startCol) && (endRow < startRow)){
                         myBoard.setBoardO(endRow + 1, endCol + 1)
                     }
@@ -96,14 +97,33 @@ object Driver {	// Scala Class with all static methods
                         myBoard.setBoardO(endCol - 1, endRow + 1)
                     }
                 }
+                 else{
+                    if ((endCol > startCol) && (endRow > startRow)){
+                        myBoard.setBoardO(endRow - 1, endCol - 1)
+                    }
+                    if ((endCol < startCol) && (endRow > startRow)){
+                        myBoard.setBoardO(endRow - 1, endCol + 1)
+                    }
+                }
+                }
                 else if ((startCol - endCol == 2 || endCol - startCol == 2)&& (!OTurn)){
                     remainingX = remainingX +1
+                  if(turn == 2){  
                     if ((endCol > startCol) && (endRow > startRow)){
                         myBoard.setBoardX(endRow - 1, endCol - 1)
                     }
                     if ((endCol < startCol) && (endRow > startRow)){
                         myBoard.setBoardX(endRow - 1, endCol + 1)
                     }
+                    }
+                  else{
+                    if ((endCol < startCol) && (endRow < startRow)){
+                        myBoard.setBoardX(endRow + 1, endCol + 1)
+                    }
+                    if ((endCol > startCol) && (endRow < startRow)){
+                        myBoard.setBoardX(endCol - 1, endRow + 1)
+                    }
+                }
 
                 }
 
@@ -129,6 +149,8 @@ object Driver {	// Scala Class with all static methods
 	        	myBoard.clearBoard
 	            myBoard.setUpGame
                 myBoard.printBoard(true)
+                moveStack.clear
+                redoStack.clear
                 OTurn = true
                 remainingX = 12
                 remainingO = 12
@@ -162,10 +184,11 @@ object Driver {	// Scala Class with all static methods
 	            if(Valid) {
 	            	val currentColor = myBoard.getColor(startRow, startCol)
 					if (OTurn) {
-						if(currentColor == 2 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {
+						if(currentColor == 2 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {	//red regular
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
+								myBoard.anotherTurn(endRow, endCol, 2, false)
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
@@ -174,16 +197,17 @@ object Driver {	// Scala Class with all static methods
 							lastMove = (startRow, startCol, endRow, endCol, 2)
 							moveStack.push(lastMove)
 						}
-						else if(currentColor == 4 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){
+						else if(currentColor == 4 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){	//red king
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
+								myBoard.anotherTurn(endRow, endCol, 4, true)
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
 							myBoard.rotateBoard180
 							OTurn = false
-							lastMove = (startRow, startCol, endRow, endCol, 2)
+							lastMove = (startRow, startCol, endRow, endCol, 4)
 							moveStack.push(lastMove)
 						}
 						else {
@@ -191,24 +215,26 @@ object Driver {	// Scala Class with all static methods
 						}
 					}
 					else {
-						if(currentColor == 1 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {
+						if(currentColor == 1 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {	//black regular
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
+								myBoard.anotherTurn(endRow, endCol, 1, false)
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
 							lastMove = (startRow, startCol, endRow, endCol, 1)
 							moveStack.push(lastMove)
 						}
-						else if(currentColor == 3 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){
+						else if(currentColor == 3 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){	//black king
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
+								myBoard.anotherTurn(endRow, endCol, 3, true)
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
-							lastMove = (startRow, startCol, endRow, endCol, 1)
+							lastMove = (startRow, startCol, endRow, endCol, 3)
 							moveStack.push(lastMove)
 						}
 						else {
@@ -322,7 +348,7 @@ class Board {
 			opposingColor1 = 1
 			opposingColor2 = 3
 		}
-//if start cell color matches turn color, not trying to move in same row, not trying to move in same column, space moving to needs to be empty, diagonal movement 1 or 2 spaces away
+		//if start cell color matches turn color, not trying to move in same row, not trying to move in same column, space moving to needs to be empty, diagonal movement 1 or 2 spaces away
 		if(getColor(sr, sc) == color && sr != er && sc != ec && getColor(er, ec) == 0 && (sr - er == -1 || sr - er == 1 || sr - er == -2 || sr - er == 2) && (sc - ec == -1 || sc - ec == 1 || sc - ec == -2 || sc - ec == 2)) {
 			//
 			if((sr - er == 2 && sc - ec == -2) && (getColor(sr-1, sc+1) != opposingColor1 && getColor(sr-1, sc+1) != opposingColor2)) {// valid diagonal right jump
@@ -405,7 +431,8 @@ class Board {
 				board(er)(ec).color = color
 				board(sr-1)(sc+1).color = 0
 			}
-		} else if(color > 2) {								//king piece jumping
+		} 
+		else if(color > 2) {								//king piece jumping
 			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
 				board(er)(ec).color = color
 				board(sr+1)(sc-1).color = 0
@@ -423,6 +450,49 @@ class Board {
 				board(sr-1)(sc+1).color = 0
 			}
 		}
+	}
+
+	// allows for multijumps after checking if possible after a player makes a move that results in a jump and checking
+	def anotherTurn(sr: Int, sc: Int, color: Int, king: Boolean){
+		var srVar = sr 	
+		var scVar = sc
+		var choseJump = false	//did player choose to make another jump?
+
+		do{	
+			val moreJumps = this.adjacencyChecker(srVar, scVar, color, king)
+			if(moreJumps._1 == true && !choseJump) {
+				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar-2, color, "NW")
+				if(choseJump) {
+					srVar = srVar-2
+					scVar = scVar-2
+				}
+			}
+			if(moreJumps._2 == true && !choseJump) {
+				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar+2, color, "NE")
+				if(choseJump) {
+					srVar = srVar-2
+					scVar = scVar+2
+				}
+			}
+			//sw & se will never be true for reg pieces since they cannot move that way
+			if(king){
+				if(moreJumps._3 == true && !choseJump) {
+					choseJump = this.multiMove(srVar, scVar, srVar+2, scVar-2, color, "SW")
+					if(choseJump) {
+						srVar = srVar+2
+						scVar = scVar-2
+					}
+				}
+				if(moreJumps._4 == true && !choseJump) {
+					choseJump = this.multiMove(srVar, scVar, srVar+2, scVar+2, color, "SE")
+					if(choseJump) {
+						srVar = srVar+2
+						scVar + scVar+2
+					}
+				}
+			}
+		}
+		while(choseJump)
 	}
 
 	// Converts the parts of the intput coordinate that are letters to the corresponding array position for the game board
@@ -486,6 +556,67 @@ class Board {
 			}
 			println()
 		}
+	}
+
+	def multiMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int, direction: String): Boolean = {	//if adjacency checker
+		val multiScan = new Scanner(System.in)
+		var anotherMove = ""
+		println("Would you like to jump again to the " + direction + "? (y/n)")
+		anotherMove = multiScan.nextLine()
+		if(anotherMove == "y"){
+			this.move(sr, sc, er, sc, color)
+			return true
+		} 
+		return false
+	}
+
+	def adjacencyChecker(r: Int, c: Int, color: Int, king: Boolean): Tuple4[Boolean, Boolean, Boolean, Boolean] = {
+		var red = false							//bool for color of piece
+		if(color%2 == 0)
+			red = true
+
+		var nw = false							//what corners contain pieces?
+		var ne = false
+		var sw = false
+		var se = false
+
+		val nwC = this.getColor(r-1, c-1)		//all 1-space away diagonals
+		val neC = this.getColor(r-1, c+1)
+		val swC = this.getColor(r+1, c-1)
+		val seC = this.getColor(r+1, c+1)
+
+		val nwC2 = this.getColor(r-2, c-2)		//all 2-spaces away diagonals
+		val neC2 = this.getColor(r-2, c+2)
+		val swC2 = this.getColor(r+2, c-2)
+		val seC2 = this.getColor(r+2, c+2)
+
+		if(red) {
+			//if any diagonals are black
+			if(nwC%2 != 0 && nwC2 == 0) 
+				nw = true
+			if(neC%2 != 0 && neC2 == 0)
+				ne = true
+			if(king) {
+				if(swC%2 != 0 && swC2 == 0)
+					sw = true
+				if(seC%2 != 0 && seC2 == 0)
+					se = true
+			}
+		}
+		else {
+			//if any diagonals are white
+			if(nwC%2 == 0 && nwC2 == 0)
+				nw = true
+			if(neC%2 == 0 && neC2 == 0)
+				ne = true
+			if(king) {
+				if(swC%2 == 0 && swC2 == 0)
+					sw = true
+				if(seC%2 == 0 && seC2 == 0)
+					se = true
+			}
+		}
+		return (nw, ne, sw, se)
 	}
 
 	def setBoardO(x: Int, y: Int) {
