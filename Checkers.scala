@@ -160,9 +160,22 @@ object Driver {	// Scala Class with all static methods
 				}
 
 	            if(Valid) {
+	            	val currentColor = myBoard.getColor(startRow, startCol)
 					if (OTurn) {
-						if(myBoard.validMove(startRow, startCol, endRow, endCol, 2)) {
-							myBoard.move(startRow, startCol, endRow, endCol, 2)
+						if(currentColor == 2 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {
+							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
+							if(startCol - endCol == 2 || endCol - startCol == 2) {
+								remainingX = remainingX - 1
+							}
+							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
+							myBoard.printBoard(false)
+							myBoard.rotateBoard180
+							OTurn = false
+							lastMove = (startRow, startCol, endRow, endCol, 2)
+							moveStack.push(lastMove)
+						}
+						else if(currentColor == 4 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){
+							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
 							}
@@ -178,8 +191,18 @@ object Driver {	// Scala Class with all static methods
 						}
 					}
 					else {
-						if(myBoard.validMove(startRow, startCol, endRow, endCol, 1)) {
-							myBoard.move(startRow, startCol, endRow, endCol, 1)	// Process black player's turn in red player's board orientation
+						if(currentColor == 1 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {
+							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
+							if(startCol - endCol == 2 || endCol - startCol == 2){
+								remainingO = remainingO - 1
+							}
+							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
+							OTurn = true
+							lastMove = (startRow, startCol, endRow, endCol, 1)
+							moveStack.push(lastMove)
+						}
+						else if(currentColor == 3 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)){
+							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
 							}
@@ -212,13 +235,9 @@ object Driver {	// Scala Class with all static methods
 					}
 				}
 			}
-			/**	I don't think this is actually needed for logic
-			else {
-				if(move != "quit") {
-			 		myBoard.invalidMove(OTurn, 2)
-			 	}
+			else if(move != "restart" && move != "quit" && move != "redo" && move != "undo" && move.length() < 6){
+				myBoard.invalidMove(OTurn, 2)
 		 	}
-		 	*/
 		}
 		println()
 		println("Exiting.")
@@ -272,18 +291,15 @@ class Board {
 					this.jump(sr, sc, er, ec, 1)
 				else if (color == 2)
 					this.jump(sr, sc, er, ec, 2)
-			}else if (sc - ec == -2 || ec - sc == -2) { //jump backward for kings
-				if (color == 3)
+				else if (color == 3)
 					this.jump(sr, sc, er, ec, 3)
 				else if (color == 4)
 					this.jump(sr, sc, er, ec, 4)
 			}
 			else {
 				board(sr)(sc).color = 0
-				if (color == 1)
-					board(er)(ec).color = 1
-				else if (color == 2)
-					board(er)(ec).color = 2
+				if (color > -1)
+					board(er)(ec).color = color
 			}
 			//king the piece if it makes it across the board
 			if(color == 2 && er == 0) {
@@ -296,34 +312,44 @@ class Board {
 
 	//if a piece exists to move and it is of the right color
 	def validMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int): Boolean = {
-		var opposingColor1 = -1
+		var opposingColor1 = -1 	//arbitrary
 		var opposingColor2 = -1
-		if(color%2 != 0) {
-			opposingColor1 = 2
+		if(color%2 != 0) {			//if black then opponent is o or O (kinged version)
+			opposingColor1 = 2 		
 			opposingColor2 = 4
 		}
-		else if(color%2 == 0){
+		else if(color%2 == 0){		//if red then opponent is x or X (kinged version)
 			opposingColor1 = 1
 			opposingColor2 = 3
 		}
-
+//if start cell color matches turn color, not trying to move in same row, not trying to move in same column, space moving to needs to be empty, diagonal movement 1 or 2 spaces away
 		if(getColor(sr, sc) == color && sr != er && sc != ec && getColor(er, ec) == 0 && (sr - er == -1 || sr - er == 1 || sr - er == -2 || sr - er == 2) && (sc - ec == -1 || sc - ec == 1 || sc - ec == -2 || sc - ec == 2)) {
+			//
 			if((sr - er == 2 && sc - ec == -2) && (getColor(sr-1, sc+1) != opposingColor1 && getColor(sr-1, sc+1) != opposingColor2)) {// valid diagonal right jump
+				println("part 1")
 				return false
 			}
+
 			else if((sr - er == 2 && sc - ec == 2) && (getColor(sr-1, sc-1) != opposingColor1 && getColor(sr-1, sc-1) != opposingColor2)) {
+				println("part 2")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == 2) && (getColor(sr+1, sc-1) != opposingColor1 && getColor(sr+1, sc-1) != opposingColor2)) {
+				println("part 3")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == -2) && (getColor(sr+1, sc+1) != opposingColor1 && getColor(sr+1, sc+1) != opposingColor2)) {
+				println("part 4")
 				return false
 			}
 			else {
+				println("part 5")
+				println(color)
 				return true
 			}
 		}
+		println("part 6")
+		println(color)
 		return false
 	}
 
@@ -360,6 +386,7 @@ class Board {
 
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board in a unique case */
 	def jump(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
+		println(color)
 		board(sr)(sc).color = 0							// the start space will no longer contain a piece
 		if (color < 3) {								// regular piece jumping
 			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
@@ -379,19 +406,19 @@ class Board {
 				board(sr-1)(sc+1).color = 0
 			}
 		} else if(color > 2) {								//king piece jumping
-			if ((abs(sr - er) == 2) && (sc - ec == 2)) { 		// x is jumping o to the left
+			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
 				board(er)(ec).color = color
 				board(sr+1)(sc-1).color = 0
 			}
-			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// x is jumping o to the right
+			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
 				board(er)(ec).color = color
 				board(sr+1)(sc+1).color = 0
 			}
-			else if ((abs(sr - er) == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
 				board(er)(ec).color = color
 				board(sr-1)(sc-1).color = 0
 			}
-			else if ((abs(sr - er) == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
 				board(er)(ec).color = color
 				board(sr-1)(sc+1).color = 0
 			}
