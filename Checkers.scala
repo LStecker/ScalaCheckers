@@ -18,6 +18,7 @@ object Driver {	// Scala Class with all static methods
 		var remainingO = 12
 		var lastMove : (Int, Int, Int, Int, Int) = (0, 0, 0, 0, 0)	//represents the most recent move
 		var moveStack = Stack[Tuple5[Int, Int, Int, Int, Int]] ()
+		var redoStack = Stack[Tuple5[Int, Int, Int, Int, Int]] ()
 		var move = ""
 		var OTurn = true	// Inidicates whether it is the red player's (o's) turn or not. Initialiezed to true since red goes first.
 		var Valid = true	// Whether user input follows requested format or not
@@ -32,11 +33,49 @@ object Driver {	// Scala Class with all static methods
 			else
 				println("It is x's turn (unless o wants to \"undo\" a move):")
 			move = scan.nextLine()
+
+			//redo stuff start
+			if (move == "redo" && redoStack.size == 0){
+				println("No moves to redo")
+			}
+			if (move == "redo" && redoStack.size > 0){
+				var move = redoStack.pop
+				moveStack.push(move)
+				var startRow = move._1 
+				var startCol = move._2
+				var endRow = move._3 
+				var endCol = move._4
+				var turn = move._5
+				myBoard.move(startRow, startCol, endRow, endCol, turn)
+				if (OTurn) {
+						if (startCol - endCol == 2 || endCol - startCol == 2){
+							remainingX = remainingX -1
+						}
+						myBoard.rotateBoard180								// Rotate to black player's board orientation for output
+						myBoard.printBoard(false)
+						myBoard.rotateBoard180
+						OTurn = false
+				}
+				else {
+						if (startCol - endCol == 2 || endCol - startCol == 2){
+							remainingO = remainingO -1
+						}
+						myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
+						OTurn = true
+				}
+				println()
+				println ("Remaining pieces for X:  " + remainingX)
+				println ("Remaining pieces for O:  " + remainingO)
+			}
+			//redo stuff end
+
+			//undo stuff start
 			if (move == "undo" && moveStack.size == 0) {
                 println("No moves to undo")
             }
             if (move == "undo" && moveStack.size > 0) {
                 var move = moveStack.pop
+                redoStack.push(move)
                 var endRow = move._1
                 var endCol = move._2
                 var startRow = move._3
@@ -80,9 +119,11 @@ object Driver {	// Scala Class with all static methods
                         myBoard.printBoard(true)                            // Rotate back to red player's board orientation for further processing
                         OTurn = true
                 }
+                println()
                 println ("Remaining pieces for X:  " + remainingX)
                 println ("Remaining pieces for O:  " + remainingO)
             }
+            //undo stuff end
 
             if (move == "restart") {
 	        	myBoard.clearBoard
@@ -93,7 +134,7 @@ object Driver {	// Scala Class with all static methods
                 remainingO = 12
             }
 
-			if (move != "quit" && move != "restart" && move != "undo" && move.length() == 6) {
+			if (move != "quit" && move != "restart" && move != "undo" && move!= "redo" && move.length() == 6) {
 				val preStartRow = move.charAt(0)
 				val startRow = myBoard.coordConver(preStartRow)
 				if (startRow > 7 || startRow < 0) {
