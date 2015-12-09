@@ -1,7 +1,7 @@
-/*	Author: 	Leanna Stecker, Ben Meyer, John Andreula, Graham Roberts
-	Class:		Programming Languages
-	Professor:	Jia Tao
-	Date:		Nov 4th, 2015	*/
+/*	Author: 		Leanna Stecker, Ben Meyer, John Andreula, Graham Roberts
+	Class:			Programming Languages
+	Professor:		Jia Tao
+	Last Updated:	Dec 9th, 2015	*/
 
 import java.util.Scanner
 import scala.math.{abs}
@@ -14,31 +14,31 @@ object Driver {	// Scala Class with all static methods
 		val myBoard = new Board
 		myBoard.setUpGame
 		myBoard.printBoard(true)
-		var remainingX = 12
-		var remainingO = 12
-		var lastMove : (Int, Int, Int, Int, Int) = (0, 0, 0, 0, 0)	//represents the most recent move
+		var remainingX = 12	// How many pieces X currently has on the board
+		var remainingO = 12	// How many pieces O currently has on the board
+		var lastMove : (Int, Int, Int, Int, Int) = (0, 0, 0, 0, 0)	//represents the most recent move made in current game
 		var moveStack = Stack[Tuple5[Int, Int, Int, Int, Int]] ()
 		var redoStack = Stack[Tuple5[Int, Int, Int, Int, Int]] ()
-		var move = ""
+		var move = ""		// Represents input taken in from the player
 		var OTurn = true	// Inidicates whether it is the red player's (o's) turn or not. Initialiezed to true since red goes first.
 		var Valid = true	// Whether user input follows requested format or not
 		val scan = new Scanner(System.in)
-		while (move != "quit") {
+		while (move.toLowerCase() != "quit") {
 			Valid = true	//assume at start of loop input will be valid and check if false later on
 			println()
 			println("Please enter a valid move (or \"quit\" to exit the program).")
-			println("Format: RowCol, RowCol where Row is a capital letter A-H & Col is a number 1-8")
+			println("Format: RowCol, RowCol where Row is a letter A-H & Col is a number 1-8")
 			if (OTurn)
-				println("It is o's turn (unless x wants to \"undo\" a move):")
+				println("It is o's turn (unless x wants to \"undo\" or \"redo\" a move):")
 			else
-				println("It is x's turn (unless o wants to \"undo\" a move):")
+				println("It is x's turn (unless o wants to \"undo\" or \"redo\" a move):")
 			move = scan.nextLine()
 
-			//redo stuff start
-			if (move == "redo" && redoStack.size == 0){
+			//start redo block 
+			if (move.toLowerCase() == "redo" && redoStack.size == 0){
 				println("No moves to redo")
 			}
-			if (move == "redo" && redoStack.size > 0){
+			if (move.toLowerCase() == "redo" && redoStack.size > 0){
 				var move = redoStack.pop
 				moveStack.push(move)
 				var startRow = move._1 
@@ -67,13 +67,13 @@ object Driver {	// Scala Class with all static methods
 				println ("Remaining pieces for X:  " + remainingX)
 				println ("Remaining pieces for O:  " + remainingO)
 			}
-			//redo stuff end
+			//end redo block
 
-			//undo stuff start
-			if (move == "undo" && moveStack.size == 0) {
+			//Start undo block
+			if (move.toLowerCase() == "undo" && moveStack.size == 0) {
                 println("No moves to undo")
             }
-            if (move == "undo" && moveStack.size > 0) {
+            if (move.toLowerCase() == "undo" && moveStack.size > 0) {
                 var move = moveStack.pop
                 redoStack.push(move)
                 var endRow = move._1
@@ -89,42 +89,41 @@ object Driver {	// Scala Class with all static methods
                 myBoard.move(startRow, startCol, endRow, endCol, turn)
                 if ((startCol - endCol == 2 || endCol - startCol == 2)&& (OTurn)){
                     remainingO = remainingO +1
-                 if(turn == 1){   
-                    if ((endCol < startCol) && (endRow < startRow)){
-                        myBoard.setBoardO(endRow + 1, endCol + 1)
-                    }
-                    if ((endCol > startCol) && (endRow < startRow)){
-                        myBoard.setBoardO(endCol - 1, endRow + 1)
-                    }
-                }
-                 else{
-                    if ((endCol > startCol) && (endRow > startRow)){
-                        myBoard.setBoardO(endRow - 1, endCol - 1)
-                    }
-                    if ((endCol < startCol) && (endRow > startRow)){
-                        myBoard.setBoardO(endRow - 1, endCol + 1)
-                    }
-                }
+	                if(turn == 1){   
+	                    if ((endCol < startCol) && (endRow < startRow)){
+	                        myBoard.setBoardO(endRow + 1, endCol + 1)
+	                    }
+	                    if ((endCol > startCol) && (endRow < startRow)){
+	                        myBoard.setBoardO(endCol - 1, endRow + 1)
+	                    }
+	                }
+	                else{
+	                    if ((endCol > startCol) && (endRow > startRow)){
+	                        myBoard.setBoardO(endRow - 1, endCol - 1)
+	                    }
+	                    if ((endCol < startCol) && (endRow > startRow)){
+	                        myBoard.setBoardO(endRow - 1, endCol + 1)
+	                    }
+	                }
                 }
                 else if ((startCol - endCol == 2 || endCol - startCol == 2)&& (!OTurn)){
                     remainingX = remainingX +1
-                  if(turn == 2){  
-                    if ((endCol > startCol) && (endRow > startRow)){
-                        myBoard.setBoardX(endRow - 1, endCol - 1)
-                    }
-                    if ((endCol < startCol) && (endRow > startRow)){
-                        myBoard.setBoardX(endRow - 1, endCol + 1)
-                    }
-                    }
-                  else{
-                    if ((endCol < startCol) && (endRow < startRow)){
-                        myBoard.setBoardX(endRow + 1, endCol + 1)
-                    }
-                    if ((endCol > startCol) && (endRow < startRow)){
-                        myBoard.setBoardX(endCol - 1, endRow + 1)
-                    }
-                }
-
+	                if(turn == 2){  
+	                    if ((endCol > startCol) && (endRow > startRow)){
+	                        myBoard.setBoardX(endRow - 1, endCol - 1)
+	                    }
+	                    if ((endCol < startCol) && (endRow > startRow)){
+	                        myBoard.setBoardX(endRow - 1, endCol + 1)
+	                    }
+	                }
+	                else{
+	                    if ((endCol < startCol) && (endRow < startRow)){
+	                        myBoard.setBoardX(endRow + 1, endCol + 1)
+	                    }
+	                    if ((endCol > startCol) && (endRow < startRow)){
+	                        myBoard.setBoardX(endCol - 1, endRow + 1)
+	                    }
+	                }
                 }
 
                 if (OTurn) {
@@ -143,9 +142,9 @@ object Driver {	// Scala Class with all static methods
                 println ("Remaining pieces for X:  " + remainingX)
                 println ("Remaining pieces for O:  " + remainingO)
             }
-            //undo stuff end
+            //end undo block
 
-            if (move == "restart") {
+            if (move.toLowerCase() == "restart") {
 	        	myBoard.clearBoard
 	            myBoard.setUpGame
                 myBoard.printBoard(true)
@@ -156,9 +155,9 @@ object Driver {	// Scala Class with all static methods
                 remainingO = 12
             }
 
-			if (move != "quit" && move != "restart" && move != "undo" && move!= "redo" && move.length() == 6) {
+			if (move.toLowerCase() != "quit" && move.toLowerCase() != "restart" && move.toLowerCase() != "undo" && move.toLowerCase() != "redo" && move.length() == 6) {
 				val preStartRow = move.charAt(0)
-				val startRow = myBoard.coordConver(preStartRow)
+				val startRow = myBoard.letterCoordConver(preStartRow)
 				if (startRow > 7 || startRow < 0) {
 					Valid = false
 				}
@@ -170,7 +169,7 @@ object Driver {	// Scala Class with all static methods
 				}
 
 				val preEndRow = move.charAt(4)
-				val endRow = myBoard.coordConver(preEndRow)
+				val endRow = myBoard.letterCoordConver(preEndRow)
 				if (endRow > 7 || endRow < 0) {
 					Valid = false
 				}
@@ -188,7 +187,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
-								myBoard.anotherTurn(endRow, endCol, 2, false)
+								myBoard.anotherTurn(endRow, endCol, 2)
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
@@ -201,7 +200,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
-								myBoard.anotherTurn(endRow, endCol, 4, true)
+								myBoard.anotherTurn(endRow, endCol, 4)
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
@@ -210,16 +209,15 @@ object Driver {	// Scala Class with all static methods
 							lastMove = (startRow, startCol, endRow, endCol, 4)
 							moveStack.push(lastMove)
 						}
-						else {
+						else
 							myBoard.invalidMove(OTurn, 1)
-						}
 					}
 					else {
 						if(currentColor == 1 && myBoard.validMove(startRow, startCol, endRow, endCol, currentColor)) {	//black regular
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
-								myBoard.anotherTurn(endRow, endCol, 1, false)
+								myBoard.anotherTurn(endRow, endCol, 1)
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
@@ -230,22 +228,20 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
-								myBoard.anotherTurn(endRow, endCol, 3, true)
+								myBoard.anotherTurn(endRow, endCol, 3)
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
 							lastMove = (startRow, startCol, endRow, endCol, 3)
 							moveStack.push(lastMove)
 						}
-						else {
-							if(move != "quit") {
-								myBoard.invalidMove(OTurn, 1)
-							}
-						}
+						else 
+							myBoard.invalidMove(OTurn, 1)
 					}
 					println()
 					println("Remaining pieces for X: " + remainingX)
 					println("Remaining pieces for O: " + remainingO)
+
 					if (remainingO == 0){
 						println("X has won")
 						move = "quit"
@@ -255,13 +251,10 @@ object Driver {	// Scala Class with all static methods
 						move = "quit"
 					}
 				}
-				else{
-					if(move != "quit") {
-						myBoard.invalidMove(OTurn, 2)
-					}
-				}
+				else
+					myBoard.invalidMove(OTurn, 2)
 			}
-			else if(move != "restart" && move != "quit" && move != "redo" && move != "undo" && move.length() < 6){
+			else if(move.toLowerCase() != "restart" && move.toLowerCase() != "quit" && move.toLowerCase() != "redo" && move.toLowerCase() != "undo" && move.length() < 6){
 				myBoard.invalidMove(OTurn, 2)
 		 	}
 		}
@@ -310,33 +303,35 @@ class Board {
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board */
 	def move(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
 		/*if(validMove(sr, sc, er, ec, color)) {*/
-			board(sr)(sc).color = 0	// the start space will no longer contain a piece
-			// Is the move a jump forard?
-			if (sc - ec == 2 || ec - sc == 2) {
-				if (color == 1)
-					this.jump(sr, sc, er, ec, 1)
-				else if (color == 2)
-					this.jump(sr, sc, er, ec, 2)
-				else if (color == 3)
-					this.jump(sr, sc, er, ec, 3)
-				else if (color == 4)
-					this.jump(sr, sc, er, ec, 4)
-			}
-			else {
-				board(sr)(sc).color = 0
-				if (color > -1)
-					board(er)(ec).color = color
-			}
-			//king the piece if it makes it across the board
-			if(color == 2 && er == 0) {
-				board(er)(ec).color = 4
-			}else if(color == 1 && er == 7) {
-				board(er)(ec).color = 3
-			}
+		board(sr)(sc).color = 0	// the start space will no longer contain a piece
+		// Is the move a jump forard?
+		if (sc - ec == 2 || ec - sc == 2) {
+			if (color == 1)
+				this.jump(sr, sc, er, ec, 1)
+			else if (color == 2)
+				this.jump(sr, sc, er, ec, 2)
+			else if (color == 3)
+				this.jump(sr, sc, er, ec, 3)
+			else if (color == 4)
+				this.jump(sr, sc, er, ec, 4)
+		}
+		else {
+			board(sr)(sc).color = 0
+			if (color > -1)
+				board(er)(ec).color = color
+		}
+		//king the piece if it makes it across the board
+		if(color == 2 && er == 0) {
+			board(er)(ec).color = 4
+		}else if(color == 1 && er == 7) {
+			board(er)(ec).color = 3
+		}
 		/*}*/
 	}
 
-	//if a piece exists to move and it is of the right color
+	/* 	Checks to see if a move is valid, according to rules of Checkers
+		if a piece exists to move and it is of the right color, then a move is valid 
+	*/
 	def validMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int): Boolean = {
 		var opposingColor1 = -1 	//arbitrary
 		var opposingColor2 = -1
@@ -350,36 +345,34 @@ class Board {
 		}
 		//if start cell color matches turn color, not trying to move in same row, not trying to move in same column, space moving to needs to be empty, diagonal movement 1 or 2 spaces away
 		if(getColor(sr, sc) == color && sr != er && sc != ec && getColor(er, ec) == 0 && (sr - er == -1 || sr - er == 1 || sr - er == -2 || sr - er == 2) && (sc - ec == -1 || sc - ec == 1 || sc - ec == -2 || sc - ec == 2)) {
-			//
-			if((sr - er == 2 && sc - ec == -2) && (getColor(sr-1, sc+1) != opposingColor1 && getColor(sr-1, sc+1) != opposingColor2)) {// valid diagonal right jump
-				println("part 1")
+			if((sr - er == 2 && sc - ec == -2) && (getColor(sr-1, sc+1) != opposingColor1 && getColor(sr-1, sc+1) != opposingColor2)) { // valid diagonal right jump
+				//debug: println("part 1")
 				return false
 			}
-
 			else if((sr - er == 2 && sc - ec == 2) && (getColor(sr-1, sc-1) != opposingColor1 && getColor(sr-1, sc-1) != opposingColor2)) {
-				println("part 2")
+				//debug: println("part 2")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == 2) && (getColor(sr+1, sc-1) != opposingColor1 && getColor(sr+1, sc-1) != opposingColor2)) {
-				println("part 3")
+				//debug: println("part 3")
 				return false
 			}
 			else if((sr - er == -2 && sc - ec == -2) && (getColor(sr+1, sc+1) != opposingColor1 && getColor(sr+1, sc+1) != opposingColor2)) {
-				println("part 4")
+				//debug: println("part 4")
 				return false
 			}
 			else {
-				println("part 5")
-				println(color)
+				/*debug: println("part 5")
+				println(color)*/
 				return true
 			}
 		}
-		println("part 6")
-		println(color)
+		/*debug: println("part 6")
+		println(color)*/
 		return false
 	}
 
-	//handles printing of the board in the event of an invalid move
+	// handles printing of the board in the event of an invalid move
 	// errCode of 1 means illegal move
 	// errCode of 2 means improper format
 	def invalidMove(OTurn: Boolean, errCode: Int) {
@@ -391,15 +384,16 @@ class Board {
 			this.printBoard(OTurn)
 			this.rotateBoard180
 		}
-		else{
+		else
 			this.printBoard(OTurn)
-		}
-		if(errCode == 1) {
+
+		if(errCode == 1)
 			outString += "That move is not possible or legal. "
-		}
-		else {
+		else 
 			outString += "Check the format instructions. "
-		}
+
+		outString += "Try again!"
+
 		println()
 		println(outString)
 	}
@@ -412,83 +406,72 @@ class Board {
 
 		Moves a game piece from of the (start row, start col) position of the board to the (end row, end col) position of the board in a unique case */
 	def jump(sr: Int, sc:  Int, er: Int, ec: Int, color: Int) {
-		println(color)
+		//debug: println(color)
 		board(sr)(sc).color = 0							// the start space will no longer contain a piece
-		if (color < 3) {								// regular piece jumping
-			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-				board(er)(ec).color = color
-				board(sr+1)(sc-1).color = 0
-			}
-			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
-				board(er)(ec).color = color
-				board(sr+1)(sc+1).color = 0
-			}
-			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
-				board(er)(ec).color = color
-				board(sr-1)(sc-1).color = 0
-			}
-			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
-				board(er)(ec).color = color
-				board(sr-1)(sc+1).color = 0
-			}
-		} 
-		else if(color > 2) {								//king piece jumping
-			if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
-				board(er)(ec).color = color
-				board(sr+1)(sc-1).color = 0
-			}
-			else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
-				board(er)(ec).color = color
-				board(sr+1)(sc+1).color = 0
-			}
-			else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
-				board(er)(ec).color = color
-				board(sr-1)(sc-1).color = 0
-			}
-			else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
-				board(er)(ec).color = color
-				board(sr-1)(sc+1).color = 0
-			}
+		// all of the following logic applies to both kings and regular pieces
+		if ((sr - er == -2) && (sc - ec == 2)) { 		// x is jumping o to the left
+			board(er)(ec).color = color
+			board(sr+1)(sc-1).color = 0
+		}
+		else if ((sr - er == -2) && (sc - ec == -2)) { 	// x is jumping o to the right
+			board(er)(ec).color = color
+			board(sr+1)(sc+1).color = 0
+		}
+		else if ((sr - er == 2) && (sc - ec == 2)) { 	// o is jumping x to the left
+			board(er)(ec).color = color
+			board(sr-1)(sc-1).color = 0
+		}
+		else if ((sr - er == 2) && (sc - ec == -2)) { 	// o is jumping x to the right
+			board(er)(ec).color = color
+			board(sr-1)(sc+1).color = 0
 		}
 	}
 
 	// allows for multijumps after checking if possible after a player makes a move that results in a jump and checking
-	def anotherTurn(sr: Int, sc: Int, color: Int, king: Boolean){
+	def anotherTurn(sr: Int, sc: Int, color: Int){
 		var srVar = sr 	
 		var scVar = sc
 		var choseJump = false	//did player choose to make another jump?
+		//var done = true
 
 		do{	
-			val moreJumps = this.adjacencyChecker(srVar, scVar, color, king)
+			var choseJump = false
+			println("**Debug Message** Checking further action for peice at " + integerCoordConver(srVar) + (scVar-1) + ".")
+			val moreJumps = this.adjacencyChecker(srVar, scVar, color)
 			if(moreJumps._1 == true && !choseJump) {
-				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar-2, color, "NW")
+				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar-2, color, srVar-1, scVar-1)
+				println("**Debug message** NW Jump. Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1) + ", JumpRow: " + integerCoordConver(srVar-2) + ", JumpCol: " + ((scVar-2)-1) + ", MoveColor: " + color)
 				if(choseJump) {
 					srVar = srVar-2
 					scVar = scVar-2
+					println("**Debug Message** Landing on--Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1))
 				}
 			}
 			if(moreJumps._2 == true && !choseJump) {
-				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar+2, color, "NE")
+				choseJump = this.multiMove(srVar, scVar, srVar-2, scVar+2, color, srVar-1, scVar+1)
+				println("**Debug message** NE Jump. Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1) + ", JumpRow: " + integerCoordConver(srVar-2) + ", JumpCol: " + ((scVar+2)-1) + ", MoveColor: " + color)
 				if(choseJump) {
 					srVar = srVar-2
 					scVar = scVar+2
+					println("**Debug Message** Landing on--Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1))
 				}
 			}
-			//sw & se will never be true for reg pieces since they cannot move that way
-			if(king){
-				if(moreJumps._3 == true && !choseJump) {
-					choseJump = this.multiMove(srVar, scVar, srVar+2, scVar-2, color, "SW")
-					if(choseJump) {
-						srVar = srVar+2
-						scVar = scVar-2
-					}
+			if(moreJumps._3 == true && !choseJump) {
+				choseJump = this.multiMove(srVar, scVar, srVar+2, scVar-2, color, srVar+1, scVar-1)
+				println("**Debug message** SW Jump. Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1) + ", JumpRow: " + integerCoordConver(srVar+2) + ", JumpCol: " + ((scVar-2)-1) + ", MoveColor: " + color)
+				if(choseJump) {
+					srVar = srVar+2
+					scVar = scVar-2
+					println("**Debug Message** Landing on--Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1))
 				}
-				if(moreJumps._4 == true && !choseJump) {
-					choseJump = this.multiMove(srVar, scVar, srVar+2, scVar+2, color, "SE")
-					if(choseJump) {
-						srVar = srVar+2
-						scVar + scVar+2
-					}
+			}
+			if(moreJumps._4 == true && !choseJump) {
+				choseJump = this.multiMove(srVar, scVar, srVar+2, scVar+2, color, srVar+1, scVar+1)
+				println("**Debug message** SE Jump. Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1) + ", JumpRow: " + integerCoordConver(srVar+2) + ", JumpCol: " + ((scVar+2)-1) + ", MoveColor: " + color)
+				if(choseJump) {
+					srVar = srVar+2
+					scVar + scVar+2
+					println("**Debug Message** Landing on--Row: " + integerCoordConver(srVar) + ", Col: " + (scVar-1))
 				}
 			}
 		}
@@ -496,17 +479,31 @@ class Board {
 	}
 
 	// Converts the parts of the intput coordinate that are letters to the corresponding array position for the game board
-	def coordConver(letter: Char): Int = {
-		val coord = letter match {
-			case 'A' => 0
-			case 'B' => 1
-			case 'C' => 2
-			case 'D' => 3
-			case 'E' => 4
-			case 'F' => 5
-			case 'G' => 6
-			case 'H' => 7
-			case  _  => 8                 // greater than 8 is invalid
+	def letterCoordConver(letter: Char): Int = {
+		val coord = letter.toString.toUpperCase() match {
+			case "A" => 0
+			case "B" => 1
+			case "C" => 2
+			case "D" => 3
+			case "E" => 4
+			case "F" => 5
+			case "G" => 6
+			case "H" => 7
+			case  _  => 8 	// invalid
+		}
+		return coord
+	}
+
+	def integerCoordConver(integer: Int): Char = {
+		val coord = integer match {
+			case 0 => 'A'
+			case 1 => 'B'
+			case 2 => 'C'
+			case 3 => 'D'
+			case 4 => 'E'
+			case 5 => 'F'
+			case 6 => 'G'
+			case 7 => 'H'
 		}
 		return coord
 	}
@@ -558,19 +555,22 @@ class Board {
 		}
 	}
 
-	def multiMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int, direction: String): Boolean = {	//if adjacency checker
+	def multiMove(sr: Int, sc:  Int, er: Int, ec: Int, color: Int, oppR: Int, oppC: Int): Boolean = {
 		val multiScan = new Scanner(System.in)
 		var anotherMove = ""
-		println("Would you like to jump again to the " + direction + "? (y/n)")
+		val oppR2 = this.integerCoordConver(oppR)
+		println("Would you like to jump again over " + oppR2 + oppC + "? (y/n)")
 		anotherMove = multiScan.nextLine()
 		if(anotherMove == "y"){
-			this.move(sr, sc, er, sc, color)
+			println("**Debug message** Moving " + integerCoordConver(sr) + (sc-1) + " to " + integerCoordConver(er) + (ec-1) + "!")
+			this.move(sr, sc, er, ec, color)
 			return true
 		} 
 		return false
 	}
 
-	def adjacencyChecker(r: Int, c: Int, color: Int, king: Boolean): Tuple4[Boolean, Boolean, Boolean, Boolean] = {
+	// given two coordinates of a piece (r is row and c is column), determines if there are nay adjacent pieces (diagonal-wise)
+	def adjacencyChecker(r: Int, c: Int, color: Int): Tuple4[Boolean, Boolean, Boolean, Boolean] = {
 		var red = false							//bool for color of piece
 		if(color%2 == 0)
 			red = true
@@ -590,31 +590,25 @@ class Board {
 		val swC2 = this.getColor(r+2, c-2)
 		val seC2 = this.getColor(r+2, c+2)
 
-		if(red) {
-			//if any diagonals are black
+		if(red) {								//if any diagonals are black
 			if(nwC%2 != 0 && nwC2 == 0) 
 				nw = true
 			if(neC%2 != 0 && neC2 == 0)
 				ne = true
-			if(king) {
-				if(swC%2 != 0 && swC2 == 0)
-					sw = true
-				if(seC%2 != 0 && seC2 == 0)
-					se = true
-			}
+			if(swC%2 != 0 && swC2 == 0)
+				sw = true
+			if(seC%2 != 0 && seC2 == 0)
+				se = true
 		}
-		else {
-			//if any diagonals are white
+		else {									//if any diagonals are white
 			if(nwC%2 == 0 && nwC2 == 0)
 				nw = true
 			if(neC%2 == 0 && neC2 == 0)
 				ne = true
-			if(king) {
-				if(swC%2 == 0 && swC2 == 0)
-					sw = true
-				if(seC%2 == 0 && seC2 == 0)
-					se = true
-			}
+			if(swC%2 == 0 && swC2 == 0)
+				sw = true
+			if(seC%2 == 0 && seC2 == 0)
+				se = true
 		}
 		return (nw, ne, sw, se)
 	}
@@ -633,6 +627,7 @@ class Board {
 		return pieceColor
 	}
 
+	// makes the entire board empty
 	def clearBoard() {
 		for ( i <- 0 until size) {
 			for (j <- 0 until size) {
@@ -644,5 +639,5 @@ class Board {
 
 // Represents a game piece for a game of checkers
 class CheckerPiece {
-	var color = 0 // type of checker piece (ternary value): 0 for none, 1 for x (black), 2 for o (red), 3 for X (black king), 4 for O (red king)
+	var color = 0 // type of checker piece: 0 for none, 1 for x (black), 2 for o (red), 3 for X (black king), 4 for O (red king)
 }
