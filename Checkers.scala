@@ -187,7 +187,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
-								myBoard.anotherTurn(endRow, endCol, 2)
+								// myBoard.anotherTurn(endRow, endCol, 2)		// future work
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
@@ -200,7 +200,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)
 							if(startCol - endCol == 2 || endCol - startCol == 2) {
 								remainingX = remainingX - 1
-								myBoard.anotherTurn(endRow, endCol, 4)
+								// myBoard.anotherTurn(endRow, endCol, 4)		// future work
 							}
 							myBoard.rotateBoard180								// Rotate to black player's board orientation for output
 							myBoard.printBoard(false)
@@ -217,7 +217,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
-								myBoard.anotherTurn(endRow, endCol, 1)
+								// myBoard.anotherTurn(endRow, endCol, 1)		// future work
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
@@ -228,7 +228,7 @@ object Driver {	// Scala Class with all static methods
 							myBoard.move(startRow, startCol, endRow, endCol, currentColor)	// Process black player's turn in red player's board orientation
 							if(startCol - endCol == 2 || endCol - startCol == 2){
 								remainingO = remainingO - 1
-								myBoard.anotherTurn(endRow, endCol, 3)
+								// myBoard.anotherTurn(endRow, endCol, 3)		// future work
 							}
 							myBoard.printBoard(true)							// Rotate back to red player's board orientation for further processing
 							OTurn = true
